@@ -1,12 +1,13 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import { cn } from "@/lib/utils";
-import { Inter } from "next/font/google";
+//import { cn } from "@/lib/utils";
+import { Geist, Geist_Mono, Inter } from "next/font/google";
+//import '@fontsource/inter/variable.css';
 import { ThemeProvider } from "@/components/theme-provider";
 
 
-const inter = Inter({ subsets: ["latin"] });
-/*const geistSans = Geist({
+
+const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
 });
@@ -14,7 +15,7 @@ const inter = Inter({ subsets: ["latin"] });
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
-});*/
+});
 
 export const metadata: Metadata = {
   title: "github-activity-dashboard",
@@ -27,12 +28,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en"
-    className="dark">
+    <html lang="en">
       <body
-        className={cn("bg-background text-foreground", inter.className)}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-background text-foreground`}
       >
-        <ThemeProvider attribute ='class' defaultTheme="system" enableSystem>
+        <ThemeProvider attribute='class' defaultTheme="system" enableSystem>
           {children}
         </ThemeProvider>
       </body>

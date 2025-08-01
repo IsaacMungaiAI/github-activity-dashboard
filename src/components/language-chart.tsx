@@ -3,16 +3,15 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from "recharts";
 
-const LANG_DATA = [
-    { name: "JavaScript", value: 45 },
-    { name: "TypeScript", value: 25 },
-    { name: "Python", value: 20 },
-    { name: "Go", value: 10 },
-];
+
 
 const COLORS = ["#FFD700", "#1E90FF", "#32CD32", "#FF6347"];
 
-export default function LanguageChart() {
+export default function LanguageChart({ langData }: { langData: { name: string; value: number }[] }) {
+
+    const data = langData.sort((a, b) => b.value - a.value).slice(0, 6); // limit to top 6
+
+
     return (
         <Card>
             <CardContent className="p-4">
@@ -21,15 +20,15 @@ export default function LanguageChart() {
                     <ResponsiveContainer width="100%" height="100%">
                         <PieChart>
                             <Pie
-                                data={LANG_DATA}
+                                data={data}
                                 dataKey="value"
                                 nameKey="name"
                                 cx="50%"
                                 cy="50%"
                                 outerRadius={80}
-                                label
+                                label={({ name }) => name}
                             >
-                                {LANG_DATA.map((_, index) => (
+                                {data.map((_, index) => (
                                     <Cell key={index} fill={COLORS[index % COLORS.length]} />
                                 ))}
                             </Pie>

@@ -1,8 +1,10 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Star, GitBranch, Users, Folder } from "lucide-react";
 
+
 type Props = {
-    type: "repos" | "commits" | "followers" | "stars";
+  type: "repos" | "commits" | "followers" | "stars";
+  count: number;
 };
 
 const ICONS = {
@@ -19,14 +21,8 @@ const TITLES = {
     stars: "Stars",
 };
 
-const MOCK_VALUES = {
-    repos: 42,
-    commits: 1234,
-    followers: 15200,
-    stars: 7890,
-};
 
-export default function StatsCard({ type }: Props) {
+export default function StatsCard({ type, count }: Props) {
     return (
         <Card>
             <CardContent className="p-4 flex flex-col gap-2">
@@ -34,7 +30,7 @@ export default function StatsCard({ type }: Props) {
                     <span className="text-sm text-muted-foreground">{TITLES[type]}</span>
                     {ICONS[type]}
                 </div>
-                <p className="text-2xl font-bold">{MOCK_VALUES[type]}</p>
+                <p className="text-2xl font-bold">{count.toLocaleString()}</p>
             </CardContent>
         </Card>
     );

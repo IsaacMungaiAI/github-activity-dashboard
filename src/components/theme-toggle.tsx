@@ -12,9 +12,10 @@ import { useTheme } from "next-themes";
 import { useMounted } from "@/app/hooks/useMounted";
 
 export function ThemeToggle() {
+    const { setTheme } = useTheme();
     const mounted = useMounted();
     if (!mounted) return null; // Ensure the component only renders after the first mount
-    const { setTheme } = useTheme();
+    
 
     return (
         <DropdownMenu>
