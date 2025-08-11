@@ -15,7 +15,7 @@ export function ThemeToggle() {
     const { setTheme } = useTheme();
     const mounted = useMounted();
     if (!mounted) return null; // Ensure the component only renders after the first mount
-    
+
 
     return (
         <DropdownMenu>
