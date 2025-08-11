@@ -13,14 +13,31 @@ type Props = {
 
 export default async function DashboardPage() {
 
-  const profile=await getUserProfile();
-  const repos=await getUserRepos();
-  const userActivity= await getUserActivity();
-  const langData = await getLanguageBreakdown(repos);
+  const profile = await getUserProfile();
+  const repos = await getUserRepos();
+  const userActivity = await getUserActivity();
+  //const langData = await getLanguageBreakdown(repos);
+
+  function transformLanguageData(rawData: Array<Record<string, number>>): { name: string; value: number }[] {
+    const languageMap: Record<string, number> = {};
+
+    rawData.forEach((repoLangs) => {
+      Object.entries(repoLangs).forEach(([lang, val]) => {
+        languageMap[lang] = (languageMap[lang] || 0) + (val ?? 0);
+      });
+    });
+
+    return Object.entries(languageMap).map(([name, value]) => ({ name, value }));
+  }
+
+  const langDataRaw = await getLanguageBreakdown(repos);
+  const langData = transformLanguageData(langDataRaw);
 
   const stars = repos.reduce((acc: any, repo: { stargazers_count: any; }) => acc + repo.stargazers_count, 0);
   const commitCount = userActivity.filter((event: { type: string; }) => event.type === "PushEvent").length;
-  
+
+  console.log(langData)
+
 
   return (
     <div className="min-h-screen p-4 md:p-8 space-y-6">
@@ -36,7 +53,7 @@ export default async function DashboardPage() {
         <RepoList repos={repos} />
         <CommitFeed activity={userActivity} />
       </div>
-      <LanguageChart langData={langData}/>
+      <LanguageChart langData={langData} />
     </div>
   );
 }
