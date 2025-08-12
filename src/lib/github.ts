@@ -47,16 +47,16 @@ export async function fetchFromGitHub(endpoint: string) {
   });
 }
 
-export async function getUserProfile() {
-  return fetchFromGitHub(`/users/${process.env.GITHUB_USERNAME}`);
+export async function getUserProfile(username: string) {
+  return fetchFromGitHub(`/users/${username}`);
 };
 
-export async function getUserRepos() {
-  return fetchFromGitHub(`/users/${process.env.GITHUB_USERNAME}/repos?per_page=100`);
+export async function getUserRepos(username: string) {
+  return fetchFromGitHub(`/users/${username}/repos?per_page=100`);
 };
 
-export async function getUserActivity() {
-  return fetchFromGitHub(`/users/${process.env.GITHUB_USERNAME}/events`);
+export async function getUserActivity(username: string) {
+  return fetchFromGitHub(`/users/${username}/events`);
 };
 
 

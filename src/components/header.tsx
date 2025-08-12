@@ -5,13 +5,16 @@ import { Button } from "@/components/ui/button";
 import { Github } from "lucide-react";
 import { useState } from "react";
 import { ThemeToggle } from "./theme-toggle";
+import { useGithub } from "@/context/GithubContext";
 
 export default function Header() {
-    const [username, setUsername] = useState("octocat");
+    const {setUsername} = useGithub();
+    const [localUsername, setLocalUsername] = useState("octocat");
 
     const handleSearch = () => {
-        console.log("Fetch data for:", username);
+        //console.log("Fetch data for:", username);
         // Later: trigger context/global state to update
+        setUsername(localUsername.trim());
     };
 
     return (
@@ -24,8 +27,8 @@ export default function Header() {
             <div className="flex gap-2 w-full md:w-auto">
                 <Input
                     placeholder="Enter GitHub username"
-                    value={username}
-                    onChange={(e) => setUsername(e.target.value)}
+                    value={localUsername}
+                    onChange={(e) => setLocalUsername(e.target.value)}
                 />
                 <Button onClick={handleSearch}>Search</Button>
                 <ThemeToggle />
