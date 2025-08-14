@@ -1,15 +1,13 @@
-// src/app/api/github/langs/[username]/route.ts
 export async function GET(
     req: Request,
-    context: { params: { username: string } }
+    context: { params: Promise<{ username: string }> }
 ) {
     try {
-        const { username } = context.params;
+        const { username } = await context.params;
 
         if (!process.env.GITHUB_TOKEN) {
             return new Response(JSON.stringify({ error: "Missing GITHUB_TOKEN" }), { status: 500 });
         }
-
 
         // Fetch all repos
         const reposRes = await fetch(`https://api.github.com/users/${username}/repos`, {
@@ -28,18 +26,28 @@ export async function GET(
 
         const repos = await reposRes.json();
 
-        // Fetch languages for each repo
-        const languagesArray = await Promise.all(
-            repos.map(async (repo: any) => {
+        // Sequentially fetch languages for each repo
+        const languagesArray: Record<string, number>[] = [];
+        for (const repo of repos) {
+            try {
                 const langRes = await fetch(repo.languages_url, {
                     headers: {
                         Authorization: `Bearer ${process.env.GITHUB_TOKEN}`,
                         "User-Agent": "github-activity-dashboard",
                     },
                 });
-                return langRes.ok ? langRes.json() : {};
-            })
-        );
+
+                if (langRes.ok) {
+                    const langs = await langRes.json();
+                    languagesArray.push(langs);
+                } else {
+                    languagesArray.push({});
+                }
+            } catch (err) {
+                console.error(`Failed to fetch languages for ${repo.name}:`, err);
+                languagesArray.push({});
+            }
+        }
 
         // Aggregate languages
         const languageMap: Record<string, number> = {};
@@ -49,7 +57,13 @@ export async function GET(
             });
         });
 
-        return new Response(JSON.stringify(languageMap), { status: 200 });
+        // Return array for chart compatibility
+        const langArray = Object.entries(languageMap).map(([name, value]) => ({
+            name,
+            value,
+        }));
+
+        return new Response(JSON.stringify(langArray), { status: 200 });
     } catch (err: any) {
         console.error("API Error:", err);
         return new Response(

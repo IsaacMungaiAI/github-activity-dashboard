@@ -8,6 +8,7 @@ import StatsCard from "@/components/stats-card";
 import { useGithub } from "@/context/GithubContext";
 import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
+import { Loader } from "@/components/Loader";
 
 export default function DashboardPage() {
   const { data: session } = useSession();
@@ -62,7 +63,7 @@ export default function DashboardPage() {
   const stars = repos.reduce((acc, repo) => acc + repo.stargazers_count, 0);
   const commitCount = userActivity.filter((event) => event.type === "PushEvent").length;
 
-  if (!profile) return <p>Loading...</p>;
+  if (!profile) return <Loader/>;
 
   return (
     <div className="min-h-screen p-4 md:p-8 space-y-6">
