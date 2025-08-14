@@ -11,6 +11,7 @@ const GithubContext = createContext<GithubContextType | undefined>(undefined);
 
 export const GithubProvider = ({ children }: { children: React.ReactNode }) => {
     const [username, setUsername] = useState("octocat");
+    
     return (
         <GithubContext.Provider value={{ username, setUsername }}>
             {children}
