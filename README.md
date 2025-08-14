@@ -32,7 +32,9 @@ A developer-focused dashboard that visualizes your GitHub profile, repositories,
 
 ## 📸 Screenshots
 
-> _(Add screenshots or screen recordings here after MVP is ready)_
+
+> <img width="500" height="500" alt="github-dashboard" src="https://github.com/user-attachments/assets/19a82dcc-5822-428e-896e-42d25281bbc8" />
+
 
 ---
 
