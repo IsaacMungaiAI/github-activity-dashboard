@@ -9,18 +9,9 @@ import { ThemeProvider } from "@/components/theme-provider";
 import { GithubProvider } from "@/context/GithubContext";
 import { SessionProvider } from "next-auth/react";
 import { Providers } from "@/components/Providers";
+import { Analytics } from "@vercel/analytics/next"
 
 
-
-/*const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});*/
 
 const geistSans = localFont({
   src: [
@@ -54,7 +45,10 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased bg-background text-foreground`}
       >
-        <Providers>{children}</Providers>
+        <Providers>
+          {children}
+          <Analytics />
+        </Providers>
       </body>
     </html>
   );
