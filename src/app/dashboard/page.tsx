@@ -41,6 +41,7 @@ interface GitHubEvent {
   created_at: string;
   repo: { name: string; url: string };
   payload: Record<string, unknown>;
+  [key: string]: unknown;
 }
 
 interface LanguageData {
