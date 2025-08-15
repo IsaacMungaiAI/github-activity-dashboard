@@ -8,26 +8,60 @@ import StatsCard from "@/components/stats-card";
 import { useGithub } from "@/context/GithubContext";
 import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
-import { Loader } from "@/components/Loader";
 import { ProfileCardSkeleton } from "@/components/skeletons/ProfileCardLoader";
 import { StatsCardSkeleton } from "@/components/skeletons/StatsCardLoader";
 import { RepoListSkeleton } from "@/components/skeletons/RepoListLoader";
 import { CommitFeedSkeleton } from "@/components/skeletons/CommitFeedLoader";
 import { LanguageChartSkeleton } from "@/components/skeletons/LangChartLoader";
 
+// GitHub API types
+interface GitHubProfile {
+  login: string;
+  avatar_url: string;
+  html_url: string;
+  name: string;
+  bio: string;
+  followers: number;
+  following: number;
+}
+
+interface GitHubRepo {
+  id: number;
+  name: string;
+  html_url: string;
+  stargazers_count: number;
+  forks_count: number;
+  language: string | null;
+  description: string | null;
+}
+
+interface GitHubEvent {
+  id: string;
+  type: string;
+  created_at: string;
+  repo: { name: string; url: string };
+  payload: Record<string, unknown>;
+}
+
+interface LanguageData {
+  name: string;
+  value: number;
+}
+
 export default function DashboardPage() {
   const { data: session } = useSession();
   const { username, setUsername } = useGithub();
-  const [profile, setProfile] = useState<any>(null);
-  const [repos, setRepos] = useState<any[]>([]);
-  const [userActivity, setUserActivity] = useState<any[]>([]);
-  const [langData, setLangData] = useState<any[]>([]);
 
-  const [loadingProfile, setLoadingProfile] = useState(true);
-  const [loadingRepos, setLoadingRepos] = useState(true);
-  const [loadingActivity, setLoadingActivity] = useState(true);
-  const [loadingLang, setLoadingLang] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+        const [profile, setProfile] = useState<GitHubProfile | null>(null);
+        const [repos, setRepos] = useState<GitHubRepo[]>([]);
+        const [userActivity, setUserActivity] = useState<GitHubEvent[]>([]);
+        const [langData, setLangData] = useState<LanguageData[]>([]);
+
+        const [loadingProfile, setLoadingProfile] = useState(true);
+        const [loadingRepos, setLoadingRepos] = useState(true);
+        const [loadingActivity, setLoadingActivity] = useState(true);
+        const [loadingLang, setLoadingLang] = useState(true);
+        const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     if (session?.user?.login) {
@@ -73,8 +107,8 @@ export default function DashboardPage() {
 
         setLangData(await langRes.json());
         setLoadingLang(false);
-      } catch (err: any) {
-        setError(err.message);
+      } catch (error: any) {
+        setError(error.message);
         setLoadingProfile(false);
         setLoadingRepos(false);
         setLoadingActivity(false);
@@ -109,15 +143,15 @@ export default function DashboardPage() {
         setUserActivity([]);
         setLangData([]);
       }} />
-      {loadingProfile ? <ProfileCardSkeleton /> : <ProfileCard profile={profile} />}
+      {loadingProfile ? (<ProfileCardSkeleton />) : profile ? (<ProfileCard profile={profile} />) : null}
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
         {loadingRepos ? <StatsCardSkeleton /> : <StatsCard type="repos" count={repos.length} />}
         {loadingActivity ? <StatsCardSkeleton /> : <StatsCard type="commits" count={commitCount} />}
-        {loadingProfile ? <StatsCardSkeleton /> : <StatsCard type="followers" count={profile.followers} />}
+        {loadingProfile ? (<StatsCardSkeleton />) : <StatsCard type="followers" count={profile?.followers?? 0} />}
         {loadingRepos ? <StatsCardSkeleton /> : <StatsCard type="stars" count={stars} />}
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {loadingRepos ? <RepoListSkeleton /> : <RepoList repos={repos} />}
+        {loadingRepos ? (<RepoListSkeleton />) : repos ? (<RepoList repos={repos} />) : null}
         {loadingActivity ? <CommitFeedSkeleton /> : <CommitFeed activity={userActivity} />}
       </div>
       {loadingLang ? <LanguageChartSkeleton /> : <LanguageChart langData={langData} />}

@@ -1,5 +1,5 @@
 import NextAuth from "next-auth";
-import GithubProvider from "next-auth/providers/github";
+import GithubProvider, { GithubProfile } from "next-auth/providers/github";
 
 const handler = NextAuth({
     providers: [
@@ -12,7 +12,7 @@ const handler = NextAuth({
         async jwt({ token, account, profile }) {
             if (account && profile) {
                 token.accessToken = account.access_token;
-                token.login = (profile as any).login; // GitHub username
+                token.login = (profile as GithubProfile).login; // GitHub username
             }
             return token;
         },

@@ -4,7 +4,7 @@ import { Star, GitBranch } from "lucide-react";
 
 type Repo = {
     name: string;
-    description: string;
+    description: string | null;
     stargazers_count: number;
     forks_count: number;
 };

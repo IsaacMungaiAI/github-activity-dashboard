@@ -22,12 +22,12 @@ export async function GET(
 
         const data = await res.json();
         return new Response(JSON.stringify(data), { status: 200 });
-    } catch (err: any) {
+    } catch (err: unknown) {
         console.error("API Error:", err);
         return new Response(
             JSON.stringify({
                 error: "Internal Server Error",
-                details: err.message || err,
+                details: err instanceof Error ? err.message : 'Unexpected error occurred',
             }),
             { status: 500 }
         );
