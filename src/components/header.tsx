@@ -2,20 +2,20 @@
 
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import {GithubIcon, Loader2 } from "lucide-react";
+import { GithubIcon, Loader2 } from "lucide-react";
 import { useState } from "react";
 import { ThemeToggle } from "./theme-toggle";
 import { useGithub } from "@/context/GithubContext";
 import { SiGithub } from "react-icons/si";
 
-export default function Header() {
+export default function Header({ onSearch }: { onSearch?: (username: string) => void }) {
     const { setUsername } = useGithub();
     const [localUsername, setLocalUsername] = useState("octocat");
     const [loading, setLoading] = useState(false);
 
     const handleSearch = () => {
-        setLoading(true);
-        setUsername(localUsername.trim());
+        if (!localUsername.trim()) return;
+        onSearch?.(localUsername.trim());
     };
 
     return (

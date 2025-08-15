@@ -1,3 +1,24 @@
+async function fetchWithTimeout(url: string, options: any = {}, timeout = 10000) {
+  const controller = new AbortController();
+  const id = setTimeout(() => controller.abort(), timeout);
+
+  try {
+    const res = await fetch(url, { ...options, signal: controller.signal });
+    clearTimeout(id);
+    return res;
+  } catch (err: any) {
+    clearTimeout(id);
+    if (err.name === "AbortError") {
+      throw new Error("Network is too slow");
+    }
+    throw err;
+  }
+}
+
+
+
+
+
 export async function GET(
     req: Request,
     context: { params: Promise<{ username: string }> }
@@ -10,7 +31,7 @@ export async function GET(
         }
 
         // Fetch all repos
-        const reposRes = await fetch(`https://api.github.com/users/${username}/repos`, {
+        const reposRes = await fetchWithTimeout(`https://api.github.com/users/${username}/repos`, {
             headers: {
                 Authorization: `Bearer ${process.env.GITHUB_TOKEN}`,
                 "User-Agent": "github-activity-dashboard",
@@ -19,9 +40,8 @@ export async function GET(
         });
 
         if (!reposRes.ok) {
-            return new Response(JSON.stringify({ error: "Failed to fetch repos" }), {
-                status: reposRes.status,
-            });
+            console.error(`Failed to fetch repos for ${username}`);
+            return new Response(JSON.stringify([]), { status: 200 });
         }
 
         const repos = await reposRes.json();
