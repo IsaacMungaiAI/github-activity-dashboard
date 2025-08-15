@@ -40,7 +40,7 @@ A developer-focused dashboard that visualizes your GitHub profile, repositories,
 
 ## 🧪 Live Demo
 
-> 🔗 [https://github-activity-dashboard.vercel.app](https://github-activity-dashboard.vercel.app) (Coming Soon)
+> 🔗 [https://github-activity-dashboard.vercel.app](https://github-activity-dashboard-next.vercel.app) 
 
 ---
 
