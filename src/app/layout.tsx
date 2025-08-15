@@ -1,13 +1,7 @@
 
 import type { Metadata } from "next";
 import "./globals.css";
-//import { cn } from "@/lib/utils";
-//import { Geist, Geist_Mono } from "next/font/google";
-//import '@fontsource/inter/variable.css';
 import localFont from "next/font/local"
-import { ThemeProvider } from "@/components/theme-provider";
-import { GithubProvider } from "@/context/GithubContext";
-import { SessionProvider } from "next-auth/react";
 import { Providers } from "@/components/Providers";
 import { Analytics } from "@vercel/analytics/next"
 

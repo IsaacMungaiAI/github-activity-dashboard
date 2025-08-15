@@ -1,10 +1,15 @@
+import { GitHubEvent, GitHubLanguages } from "@/types/github";
+
 // lib/github.ts
 export interface Repo {
   name: string;
   full_name: string;
   languages_url: string;
   html_url: string;
-  [key: string]: any; // allows extra fields without error
+  description?: string | null;
+  stargazers_count?: number;
+  forks_count?: number;
+  language?: string | null;// allows extra fields without error
 }
 
 
@@ -55,12 +60,12 @@ export async function getUserRepos(username: string) {
   return fetchFromGitHub(`/users/${username}/repos?per_page=100`);
 };
 
-export async function getUserActivity(username: string) {
+export async function getUserActivity(username: string): Promise<GitHubEvent[]> {
   return fetchFromGitHub(`/users/${username}/events`);
 };
 
 
-export async function getLanguageBreakdown(repos: Repo[]): Promise<any[]> {
+export async function getLanguageBreakdown(repos: Repo[]): Promise<GitHubLanguages[]> {
   try {
     return await Promise.all(
       repos.map(async (repo) => {
@@ -78,7 +83,7 @@ export async function getLanguageBreakdown(repos: Repo[]): Promise<any[]> {
         clearTimeout(timeout);
 
         if (!res.ok) throw new Error(`GitHub API error: ${res.status}`);
-        return await res.json();
+        return await res.json() as GitHubLanguages;
       })
     );
   } catch (error) {
