@@ -1,4 +1,5 @@
-interface FetchOptions extends RequestInit {}
+type FetchOptions = RequestInit;
+
 
 async function fetchWithTimeout(
   url: string,

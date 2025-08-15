@@ -52,16 +52,16 @@ export default function DashboardPage() {
   const { data: session } = useSession();
   const { username, setUsername } = useGithub();
 
-        const [profile, setProfile] = useState<GitHubProfile | null>(null);
-        const [repos, setRepos] = useState<GitHubRepo[]>([]);
-        const [userActivity, setUserActivity] = useState<GitHubEvent[]>([]);
-        const [langData, setLangData] = useState<LanguageData[]>([]);
+  const [profile, setProfile] = useState<GitHubProfile | null>(null);
+  const [repos, setRepos] = useState<GitHubRepo[]>([]);
+  const [userActivity, setUserActivity] = useState<GitHubEvent[]>([]);
+  const [langData, setLangData] = useState<LanguageData[]>([]);
 
-        const [loadingProfile, setLoadingProfile] = useState(true);
-        const [loadingRepos, setLoadingRepos] = useState(true);
-        const [loadingActivity, setLoadingActivity] = useState(true);
-        const [loadingLang, setLoadingLang] = useState(true);
-        const [error, setError] = useState<string | null>(null);
+  const [loadingProfile, setLoadingProfile] = useState(true);
+  const [loadingRepos, setLoadingRepos] = useState(true);
+  const [loadingActivity, setLoadingActivity] = useState(true);
+  const [loadingLang, setLoadingLang] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     if (session?.user?.login) {
@@ -107,8 +107,12 @@ export default function DashboardPage() {
 
         setLangData(await langRes.json());
         setLoadingLang(false);
-      } catch (error: any) {
-        setError(error.message);
+      } catch (error: unknown) {
+        if (error instanceof Error) {
+          setError(error.message);
+        } else {
+          setError(String(error));
+        }
         setLoadingProfile(false);
         setLoadingRepos(false);
         setLoadingActivity(false);
@@ -147,7 +151,7 @@ export default function DashboardPage() {
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
         {loadingRepos ? <StatsCardSkeleton /> : <StatsCard type="repos" count={repos.length} />}
         {loadingActivity ? <StatsCardSkeleton /> : <StatsCard type="commits" count={commitCount} />}
-        {loadingProfile ? (<StatsCardSkeleton />) : <StatsCard type="followers" count={profile?.followers?? 0} />}
+        {loadingProfile ? (<StatsCardSkeleton />) : <StatsCard type="followers" count={profile?.followers ?? 0} />}
         {loadingRepos ? <StatsCardSkeleton /> : <StatsCard type="stars" count={stars} />}
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
