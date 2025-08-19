@@ -51,7 +51,7 @@ interface LanguageData {
 }
 
 export default function DashboardPage() {
-  const { data: session, status} = useSession();
+  const { data: session, status } = useSession();
   const { username, setUsername } = useGithub();
 
   const [profile, setProfile] = useState<GitHubProfile | null>(null);
@@ -65,23 +65,7 @@ export default function DashboardPage() {
   const [loadingLang, setLoadingLang] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  if (status === "loading") {
-    return <p className="text-center mt-10">Loading session...</p>;
-  }
 
-  if (!session) {
-    return (
-      <div className="flex flex-col items-center justify-center min-h-screen">
-        <p className="mb-4 text-lg">You’re not signed in</p>
-        <button
-          onClick={() => signIn("github")}
-          className="px-4 py-2 bg-black text-white rounded-lg"
-        >
-          Sign in with GitHub
-        </button>
-      </div>
-    );
-  }
 
 
   useEffect(() => {
@@ -143,6 +127,24 @@ export default function DashboardPage() {
 
     fetchData();
   }, [username]);
+
+  if (status === "loading") {
+    return <p className="text-center mt-10">Loading session...</p>;
+  }
+
+  if (!session) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-screen">
+        <p className="mb-4 text-lg">You’re not signed in</p>
+        <button
+          onClick={() => signIn("github")}
+          className="px-4 py-2 bg-black text-white rounded-lg"
+        >
+          Sign in with GitHub
+        </button>
+      </div>
+    );
+  }
 
 
 
