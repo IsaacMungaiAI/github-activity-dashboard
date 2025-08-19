@@ -30,6 +30,11 @@ export default function Header({ onSearch }: { onSearch?: (username: string) => 
                     placeholder="Enter GitHub username"
                     value={localUsername}
                     onChange={(e) => setLocalUsername(e.target.value)}
+                    onKeyDown={(e) => {
+                        if (e.key === "Enter") {
+                            handleSearch();
+                        }
+                    }}
                 />
                 <Button onClick={handleSearch} disabled={loading}>
                     {loading ? (
