@@ -1,3 +1,7 @@
+import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+import { getServerSession } from "next-auth";
+import { NextResponse } from "next/server";
+
 type FetchOptions = RequestInit;
 
 
@@ -34,6 +38,13 @@ export async function GET(
   context: { params: Promise<{ username: string }> }
 ) {
   try {
+    const session = await getServerSession(authOptions);
+
+    if (!session?.accessToken) {
+      return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
+    }
+
+
     const { username } = await context.params;
 
     if (!process.env.GITHUB_TOKEN) {
@@ -47,7 +58,7 @@ export async function GET(
       `https://api.github.com/users/${username}/repos`,
       {
         headers: {
-          Authorization: `Bearer ${process.env.GITHUB_TOKEN}`,
+          Authorization: `Bearer ${session.accessToken}`,
           "User-Agent": "github-activity-dashboard",
         },
         cache: "no-store",
@@ -67,7 +78,7 @@ export async function GET(
       try {
         const langRes = await fetch(repo.languages_url, {
           headers: {
-            Authorization: `Bearer ${process.env.GITHUB_TOKEN}`,
+            Authorization: `Bearer ${session.accessToken}`,
             "User-Agent": "github-activity-dashboard",
           },
         });

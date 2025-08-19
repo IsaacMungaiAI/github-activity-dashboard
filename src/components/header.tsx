@@ -3,15 +3,24 @@
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { GithubIcon, Loader2 } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ThemeToggle } from "./theme-toggle";
 import { useGithub } from "@/context/GithubContext";
 import { SiGithub } from "react-icons/si";
+import { signOut, useSession } from "next-auth/react";
 
 export default function Header({ onSearch }: { onSearch?: (username: string) => void }) {
-    const { setUsername } = useGithub();
-    const [localUsername, setLocalUsername] = useState("octocat");
+    const { data: session } = useSession();
+    const [localUsername, setLocalUsername] = useState("");
     const [loading, setLoading] = useState(false);
+
+
+    useEffect(() => {
+        if (session?.user?.login) {
+            setLocalUsername(session.user.login);
+            onSearch?.(session.user.login); // auto-load user’s data
+        }
+    }, [session?.user?.login]);
 
     const handleSearch = () => {
         if (!localUsername.trim()) return;
@@ -44,6 +53,10 @@ export default function Header({ onSearch }: { onSearch?: (username: string) => 
                     )}
                 </Button>
                 <ThemeToggle />
+                <Button onClick={() => signOut()} className="px-4 py-2 bg-black text-white rounded-lg">
+                    Sign out
+                </Button>
+
             </div>
         </div>
     );

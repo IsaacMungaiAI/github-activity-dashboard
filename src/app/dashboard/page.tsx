@@ -1,4 +1,5 @@
 "use client";
+
 import Header from "@/components/header";
 import ProfileCard from "@/components/profile-card";
 import RepoList from "@/components/repo-list";
@@ -7,7 +8,7 @@ import LanguageChart from "@/components/language-chart";
 import StatsCard from "@/components/stats-card";
 import { useGithub } from "@/context/GithubContext";
 import { useEffect, useState } from "react";
-import { useSession } from "next-auth/react";
+import { useSession, signIn, signOut } from "next-auth/react";
 import { ProfileCardSkeleton } from "@/components/skeletons/ProfileCardLoader";
 import { StatsCardSkeleton } from "@/components/skeletons/StatsCardLoader";
 import { RepoListSkeleton } from "@/components/skeletons/RepoListLoader";
@@ -50,7 +51,7 @@ interface LanguageData {
 }
 
 export default function DashboardPage() {
-  const { data: session } = useSession();
+  const { data: session, status} = useSession();
   const { username, setUsername } = useGithub();
 
   const [profile, setProfile] = useState<GitHubProfile | null>(null);
@@ -63,6 +64,25 @@ export default function DashboardPage() {
   const [loadingActivity, setLoadingActivity] = useState(true);
   const [loadingLang, setLoadingLang] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  if (status === "loading") {
+    return <p className="text-center mt-10">Loading session...</p>;
+  }
+
+  if (!session) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-screen">
+        <p className="mb-4 text-lg">You’re not signed in</p>
+        <button
+          onClick={() => signIn("github")}
+          className="px-4 py-2 bg-black text-white rounded-lg"
+        >
+          Sign in with GitHub
+        </button>
+      </div>
+    );
+  }
+
 
   useEffect(() => {
     if (session?.user?.login) {

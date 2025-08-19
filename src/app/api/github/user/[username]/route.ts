@@ -1,11 +1,22 @@
+import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+import { getServerSession } from "next-auth";
+import { NextResponse } from "next/server";
+
 export async function GET(
     req: Request,
     context: { params: Promise<{ username: string }> }
 ) {
+
+    const session = await getServerSession(authOptions);
+
+    if (!session?.accessToken) {
+        return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
+    }
+
     const { username } = await context.params
     const res = await fetch(`https://api.github.com/users/${username}`, {
         headers: {
-            Authorization: `Bearer ${process.env.GITHUB_TOKEN}`,
+            Authorization: `Bearer ${session.accessToken}`, // 🔹 signed-in user’s token,
             "User-Agent": "github-activity-dashboard"
         },
         cache: "no-store"
